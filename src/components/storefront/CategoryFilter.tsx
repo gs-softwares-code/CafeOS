@@ -17,8 +17,8 @@ export function CategoryFilter({
   itemCounts,
 }: CategoryFilterProps) {
   return (
-    <div className="sticky top-0 z-20 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-[#E8DED1] px-4 py-2.5 overflow-x-auto no-scrollbar shadow-xs">
-      <div className="flex items-center gap-2 max-w-5xl mx-auto min-w-max">
+    <div className="sticky top-0 z-20 bg-[#FDFBF7]/95 backdrop-blur-md border-b border-[#E8DED1] px-4 sm:px-6 lg:px-10 py-2.5 overflow-x-auto no-scrollbar shadow-xs">
+      <div className="flex items-center gap-2 max-w-[1440px] mx-auto min-w-max">
         <button
           onClick={() => onSelectCategory('all')}
           className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${

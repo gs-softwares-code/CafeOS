@@ -67,7 +67,8 @@ export function StorefrontHeader({ cafe, cartCount, onOpenCart }: StorefrontHead
       </div>
 
       {/* Meta Bar: Address, Hours, Call */}
-      <div className="px-4 py-2.5 bg-[#FAF7F0] border-t border-[#EFE7D5] flex flex-wrap items-center justify-between gap-y-2 text-xs text-[#421E10]">
+      <div className="px-4 sm:px-6 lg:px-10 py-2.5 bg-[#FAF7F0] border-t border-[#EFE7D5]">
+        <div className="max-w-[1440px] mx-auto flex flex-wrap items-center justify-between gap-y-2 text-xs text-[#421E10]">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <span className="flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5 text-[#D9531E] shrink-0" />
@@ -83,9 +84,18 @@ export function StorefrontHeader({ cafe, cartCount, onOpenCart }: StorefrontHead
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#2E7D32] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-          <ShieldCheck className="h-3.5 w-3.5" />
-          <span>FSSAI Registered • Freshly Prepared</span>
+        <div className="flex items-center gap-2">
+          <a
+            href="/account"
+            className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#3f2316] bg-amber-100 hover:bg-amber-200 px-3 py-1 rounded-full border border-amber-300 transition"
+          >
+            <span>My Account &amp; Alerts</span>
+          </a>
+          <div className="flex items-center gap-1.5 text-[11px] font-medium text-[#2E7D32] bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            <span>FSSAI Registered • Freshly Prepared</span>
+          </div>
+        </div>
         </div>
       </div>
     </header>

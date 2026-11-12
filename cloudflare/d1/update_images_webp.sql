@@ -1,0 +1,1 @@
+UPDATE menu_items SET image_url = REPLACE(image_url, '.jpg', '.webp');

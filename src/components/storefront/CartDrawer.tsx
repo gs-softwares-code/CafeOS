@@ -83,7 +83,7 @@ export function CartDrawer({
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as { error?: string; order: { id: string } };
 
       if (!res.ok) {
         throw new Error(data.error || 'Failed to submit order. Please try again.');
@@ -353,4 +353,3 @@ export function CartDrawer({
     </div>
   );
 }
-

@@ -1,5 +1,10 @@
 import type { NextConfig } from 'next';
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import path from 'path';
+
+if (process.env.NODE_ENV === 'development') {
+  void initOpenNextCloudflareForDev();
+}
 
 const nextConfig: NextConfig = {
   outputFileTracingRoot: path.join(__dirname, '.'),
@@ -14,4 +19,3 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-

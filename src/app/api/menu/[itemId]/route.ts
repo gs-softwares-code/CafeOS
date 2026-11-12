@@ -1,39 +1,69 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { isDevelopmentAdminApiEnabled } from '@/lib/api/admin-access';
 
 export async function PATCH(
   req: NextRequest,
   context: { params: Promise<{ itemId: string }> }
 ) {
+  if (!isDevelopmentAdminApiEnabled()) {
+    return NextResponse.json(
+      { error: 'Staff authentication is not configured for menu changes' },
+      { status: 403 }
+    );
+  }
+
   try {
     const { itemId } = await context.params;
-    const body = await req.json();
+    const body: unknown = await req.json();
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return NextResponse.json({ error: 'Invalid menu item update' }, { status: 400 });
+    }
+    const input = body as Record<string, unknown>;
 
     const updates: Record<string, unknown> = {};
-    if (body.price !== undefined) {
-      const p = Number(body.price);
+    if (input.price !== undefined) {
+      const p = Number(input.price);
       if (isNaN(p) || p < 0) {
         return NextResponse.json({ error: 'Invalid price' }, { status: 400 });
       }
       updates.price = p;
     }
-    if (body.is_available !== undefined) {
-      updates.is_available = Boolean(body.is_available);
+    if (input.is_available !== undefined) {
+      if (typeof input.is_available !== 'boolean') {
+        return NextResponse.json({ error: 'Invalid availability value' }, { status: 400 });
+      }
+      updates.is_available = input.is_available;
     }
-    if (body.name !== undefined) {
-      updates.name = String(body.name).trim();
+    if (input.name !== undefined) {
+      if (typeof input.name !== 'string' || !input.name.trim()) {
+        return NextResponse.json({ error: 'Invalid name' }, { status: 400 });
+      }
+      updates.name = input.name.trim();
     }
-    if (body.description !== undefined) {
-      updates.description = String(body.description).trim();
+    if (input.description !== undefined) {
+      if (typeof input.description !== 'string') {
+        return NextResponse.json({ error: 'Invalid description' }, { status: 400 });
+      }
+      updates.description = input.description.trim();
     }
-    if (body.category_id !== undefined) {
-      updates.category_id = String(body.category_id);
+    if (input.category_id !== undefined) {
+      if (typeof input.category_id !== 'string') {
+        return NextResponse.json({ error: 'Invalid category' }, { status: 400 });
+      }
+      updates.category_id = input.category_id;
     }
-    if (body.is_veg !== undefined) {
-      updates.is_veg = Boolean(body.is_veg);
+    if (input.is_veg !== undefined) {
+      if (typeof input.is_veg !== 'boolean') {
+        return NextResponse.json({ error: 'Invalid vegetarian value' }, { status: 400 });
+      }
+      updates.is_veg = input.is_veg;
     }
-    if (body.image_url !== undefined) {
-      updates.image_url = String(body.image_url).trim();
+    if (input.image_url !== undefined) {
+      if (typeof input.image_url !== 'string') {
+        return NextResponse.json({ error: 'Invalid image URL' }, { status: 400 });
+      }
+      updates.image_url = input.image_url.trim();
     }
 
     const updated = await db.updateMenuItem(itemId, updates);
@@ -43,8 +73,8 @@ export async function PATCH(
 
     return NextResponse.json({ success: true, item: updated });
   } catch (err: unknown) {
-    const error = err as Error;
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error('Menu update error:', err);
+    return NextResponse.json({ error: 'Failed to update menu item' }, { status: 500 });
   }
 }
 
@@ -52,6 +82,13 @@ export async function DELETE(
   req: NextRequest,
   context: { params: Promise<{ itemId: string }> }
 ) {
+  if (!isDevelopmentAdminApiEnabled()) {
+    return NextResponse.json(
+      { error: 'Staff authentication is not configured for menu changes' },
+      { status: 403 }
+    );
+  }
+
   try {
     const { itemId } = await context.params;
     const deleted = await db.deleteMenuItem(itemId);
@@ -66,4 +103,3 @@ export async function DELETE(
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-

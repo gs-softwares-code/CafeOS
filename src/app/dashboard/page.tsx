@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   ShoppingBag,
   Clock,
@@ -12,14 +13,17 @@ import {
   Sparkles,
   Volume2,
   ArrowRight,
+  LogOut,
 } from 'lucide-react';
 import { Cafe, Order, MenuItem, Category, OrderStatus } from '@/lib/types';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { StatCards } from '@/components/dashboard/StatCards';
 import { OrderCard } from '@/components/dashboard/OrderCard';
 import { MenuManager } from '@/components/dashboard/MenuManager';
+import { CustomerMessagesPanel } from '@/components/dashboard/CustomerMessagesPanel';
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [activeCafeId, setActiveCafeId] = useState<string>('cafe-kurali-01');
   const [cafes, setCafes] = useState<Cafe[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
@@ -33,6 +37,26 @@ export default function DashboardPage() {
   const [isResetting, setIsResetting] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Enforce staff session authentication
+  useEffect(() => {
+    async function verifyStaff() {
+      try {
+        const res = await fetch('/api/staff/auth');
+        if (!res.ok) {
+          router.push('/staff-login');
+          return;
+        }
+        const data = await res.json();
+        if (data.staff?.role === 'reception') {
+          router.push('/reception');
+        }
+      } catch {
+        router.push('/staff-login');
+      }
+    }
+    void verifyStaff();
+  }, [router]);
 
   // Initial available cafes
   useEffect(() => {
@@ -98,8 +122,8 @@ export default function DashboardPage() {
       ]);
 
       const [ordersData, menuData] = await Promise.all([
-        ordersRes.json(),
-        menuRes.json(),
+        ordersRes.json() as Promise<{ orders?: Order[] }>,
+        menuRes.json() as Promise<{ items?: MenuItem[] }>,
       ]);
 
       if (ordersData.orders) setOrders(ordersData.orders);
@@ -159,7 +183,7 @@ export default function DashboardPage() {
         throw new Error('Failed to update status on server');
       }
 
-      const data = await res.json();
+      const data = (await res.json()) as { order: Order };
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? data.order : o))
       );
@@ -174,10 +198,18 @@ export default function DashboardPage() {
   // Reset Demo Data
   const handleResetDemo = async () => {
     if (!confirm('Reset all demo data back to default initial seed?')) return;
+    const resetKey = prompt('Enter the development admin reset key');
+    if (!resetKey) return;
     try {
       setIsResetting(true);
-      const res = await fetch('/api/demo/reset', { method: 'POST' });
-      if (!res.ok) throw new Error('Reset failed');
+      const res = await fetch('/api/demo/reset', {
+        method: 'POST',
+        headers: { 'x-admin-reset-key': resetKey },
+      });
+      if (!res.ok) {
+        const data = (await res.json()) as { error?: string };
+        throw new Error(data.error || 'Reset failed');
+      }
       await fetchDashboardData(false);
     } catch (err: unknown) {
       const e = err as Error;
@@ -210,6 +242,7 @@ export default function DashboardPage() {
         onSwitchCafe={(id) => setActiveCafeId(id)}
         onResetDemo={handleResetDemo}
         isResetting={isResetting}
+        allowDemoReset={process.env.NODE_ENV === 'development'}
         activeTab={activeTab}
         onTabChange={setActiveTab}
       />
@@ -350,8 +383,9 @@ export default function DashboardPage() {
             onRefreshItems={() => fetchDashboardData(true)}
           />
         )}
+
+        <CustomerMessagesPanel cafeId={activeCafeId} />
       </main>
     </div>
   );
 }
-

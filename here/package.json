@@ -1,0 +1,25 @@
+{
+  "name": "cafeos",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces --if-present",
+    "dev:api": "npm run dev --workspace=@cafeos/api",
+    "dev:web": "npm run dev --workspace=@cafeos/web",
+    "build": "npm run build --workspace=@cafeos/shared && npm run build --workspace=@cafeos/db && npm run build --workspace=@cafeos/api && npm run build --workspace=@cafeos/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "db:generate": "npm run db:generate --workspace=@cafeos/db",
+    "db:migrate": "npm run db:migrate --workspace=@cafeos/db",
+    "db:push": "npm run db:push --workspace=@cafeos/db",
+    "db:seed": "npm run db:seed --workspace=@cafeos/db"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
+

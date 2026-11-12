@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import { PwaRegistrar } from '@/components/pwa/PwaRegistrar';
 
 export const metadata: Metadata = {
   title: 'CafeOS — Independent Café Operations & Quick-Order Platform',
   description: 'Multi-tenant cloud operations platform for independent cafés in Punjab and beyond. Mobile ordering, live kitchen order management, and instant menu controls.',
+  manifest: '/manifest.webmanifest',
   keywords: ['CafeOS', 'Cafe management', 'Kurali Cafe', 'Punjab food ordering', 'QR menu', 'kitchen display'],
   openGraph: {
     title: 'CafeOS — Independent Café Operations Platform',
@@ -28,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-[#FDFBF7] text-[#1C130E] antialiased">
+        <PwaRegistrar />
         {children}
       </body>
     </html>

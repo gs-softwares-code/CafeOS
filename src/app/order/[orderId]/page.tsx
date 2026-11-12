@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { Order, OrderStatus } from '@/lib/types';
 
+type TrackedOrder = Omit<Order, 'customer_phone' | 'cafe_id'>;
+
 interface PageProps {
   params: Promise<{ orderId: string }>;
 }
@@ -24,7 +26,7 @@ interface PageProps {
 export default function OrderTrackerPage({ params }: PageProps) {
   const { orderId } = use(params);
 
-  const [order, setOrder] = useState<Order | null>(null);
+  const [order, setOrder] = useState<TrackedOrder | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastRefreshed, setLastRefreshed] = useState<Date>(new Date());
@@ -45,7 +47,7 @@ export default function OrderTrackerPage({ params }: PageProps) {
       if (!res.ok) {
         throw new Error('Order not found or expired');
       }
-      const data = await res.json();
+      const data = (await res.json()) as { order: TrackedOrder };
       setOrder(data.order);
       setLastRefreshed(new Date());
       setError(null);
@@ -263,7 +265,6 @@ export default function OrderTrackerPage({ params }: PageProps) {
           <div className="pt-3 border-t border-stone-100 flex flex-wrap items-center justify-between text-xs text-stone-600 gap-2">
             <div>
               <p>Customer: <span className="font-semibold text-stone-800">{order.customer_name}</span></p>
-              <p>Phone: <span className="font-semibold text-stone-800">{order.customer_phone}</span></p>
             </div>
             <div className="text-right">
               <p>Placed at:</p>
@@ -285,4 +286,3 @@ export default function OrderTrackerPage({ params }: PageProps) {
     </div>
   );
 }
-

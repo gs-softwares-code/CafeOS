@@ -57,12 +57,12 @@ export default function CafeStorefrontPage({ params }: PageProps) {
         
         // Fetch directly using server endpoint or initial data
         const menuRes = await fetch(`/api/menu?cafe_id=cafe-kurali-01`);
-        const menuData = await menuRes.json();
+        const menuData = (await menuRes.json()) as { items?: MenuItem[] };
 
         // If specific cafe requested
         if (slug === 'pinjore-brews') {
           const pRes = await fetch(`/api/menu?cafe_id=cafe-pinjore-02`);
-          const pData = await pRes.json();
+          const pData = (await pRes.json()) as { items?: MenuItem[] };
           if (isMounted) {
             setCafe({
               id: 'cafe-pinjore-02',
@@ -287,7 +287,7 @@ export default function CafeStorefrontPage({ params }: PageProps) {
       />
 
       {/* Search & Quick Filter Ribbon */}
-      <div className="max-w-5xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 py-4 flex flex-wrap items-center justify-between gap-3">
         <div className="relative flex-1 min-w-[220px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-600" />
           <input
@@ -323,7 +323,7 @@ export default function CafeStorefrontPage({ params }: PageProps) {
       />
 
       {/* Menu Cards Catalog */}
-      <main className="max-w-5xl mx-auto px-4 mt-6">
+      <main className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 mt-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-lg font-bold text-[#1C130E] font-serif">
@@ -354,7 +354,7 @@ export default function CafeStorefrontPage({ params }: PageProps) {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-5">
             {filteredItems.map((item) => {
               const inCart = cart.find((i) => i.menu_item.id === item.id)?.quantity || 0;
               return (
@@ -411,4 +411,3 @@ export default function CafeStorefrontPage({ params }: PageProps) {
     </div>
   );
 }
-

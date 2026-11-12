@@ -1,0 +1,26 @@
+{
+  "name": "Verma & Sons — CafeOS",
+  "short_name": "CafeOS",
+  "description": "Order freshly brewed chai, specialty coffee, and bakes with live order tracking and alerts.",
+  "start_url": "/cafe/kurali-chai-bakehouse",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf7f2",
+  "theme_color": "#3f2316",
+  "icons": [
+    {
+      "src": "/images/menu/cappuccino.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/menu/cappuccino.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
+

@@ -13,6 +13,7 @@ import {
   Menu,
   ShoppingBag,
   ChevronDown,
+  LogOut,
 } from 'lucide-react';
 import { Cafe } from '@/lib/types';
 
@@ -22,6 +23,7 @@ interface DashboardHeaderProps {
   onSwitchCafe: (cafeId: string) => void;
   onResetDemo: () => Promise<void>;
   isResetting: boolean;
+  allowDemoReset: boolean;
   activeTab: 'orders' | 'menu';
   onTabChange: (tab: 'orders' | 'menu') => void;
 }
@@ -32,6 +34,7 @@ export function DashboardHeader({
   onSwitchCafe,
   onResetDemo,
   isResetting,
+  allowDemoReset,
   activeTab,
   onTabChange,
 }: DashboardHeaderProps) {
@@ -117,15 +120,36 @@ export function DashboardHeader({
               <ExternalLink className="h-3.5 w-3.5" />
             </Link>
 
-            <button
-              onClick={onResetDemo}
-              disabled={isResetting}
-              className="flex items-center gap-1.5 text-xs font-bold text-white bg-[#D9531E] hover:bg-[#B83F12] px-3.5 py-1.5 rounded-xl shadow-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
-              title="Reset all demo orders and catalog items to initial state"
+            <Link
+              href="/reception"
+              className="flex items-center gap-1.5 text-xs font-semibold text-emerald-300 hover:text-white bg-emerald-950/60 hover:bg-emerald-900 border border-emerald-700/50 px-3 py-1.5 rounded-xl transition"
             >
-              <RotateCcw className={`h-3.5 w-3.5 ${isResetting ? 'animate-spin' : ''}`} />
-              <span>{isResetting ? 'Resetting...' : 'Reset Demo Data'}</span>
+              <span>Reception POS</span>
+            </Link>
+
+            <button
+              onClick={async () => {
+                await fetch('/api/staff/auth', { method: 'DELETE' });
+                window.location.href = '/staff-login';
+              }}
+              className="flex items-center gap-1 text-xs font-semibold text-stone-300 hover:text-white bg-white/5 hover:bg-red-950 border border-white/10 px-2.5 py-1.5 rounded-xl transition"
+              title="Sign Out of Admin"
+            >
+              <LogOut className="h-3.5 w-3.5" />
+              <span>Sign Out</span>
             </button>
+
+            {allowDemoReset && (
+              <button
+                onClick={onResetDemo}
+                disabled={isResetting}
+                className="flex items-center gap-1.5 text-xs font-bold text-white bg-[#D9531E] hover:bg-[#B83F12] px-3.5 py-1.5 rounded-xl shadow-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
+                title="Reset all development demo orders and catalog items"
+              >
+                <RotateCcw className={`h-3.5 w-3.5 ${isResetting ? 'animate-spin' : ''}`} />
+                <span>{isResetting ? 'Resetting...' : 'Reset Demo Data'}</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -159,4 +183,3 @@ export function DashboardHeader({
     </header>
   );
 }
-
